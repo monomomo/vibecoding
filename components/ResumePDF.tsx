@@ -1,83 +1,108 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
 import { resumeData } from '@/data/resume';
+
+Font.register({
+  family: 'Noto Sans SC',
+  fonts: [
+    {
+      src: 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.0.3/files/noto-sans-sc-chinese-simplified-400-normal.woff2',
+      fontWeight: 'normal',
+    },
+    {
+      src: 'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.0.3/files/noto-sans-sc-chinese-simplified-700-normal.woff2',
+      fontWeight: 'bold',
+    },
+  ],
+});
 
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
-    fontFamily: 'Helvetica',
+    padding: 30,
+    fontFamily: 'Noto Sans SC',
   },
   header: {
-    marginBottom: 20,
+    alignItems: 'center',
+    marginBottom: 12,
   },
   name: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#1f2937',
   },
   title: {
-    fontSize: 16,
+    fontSize: 12,
     color: '#ea580c',
-    marginTop: 4,
+    marginTop: 2,
   },
   tagline: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#6b7280',
-    marginTop: 4,
+    marginTop: 2,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    marginTop: 6,
+    justifyContent: 'center',
+  },
+  contactItem: {
+    fontSize: 9,
+    color: '#4b5563',
+    marginHorizontal: 6,
   },
   section: {
-    marginTop: 20,
+    marginTop: 10,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: 'bold',
     color: '#1f2937',
-    borderBottom: '2 solid #ea580c',
-    paddingBottom: 4,
-    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ea580c',
+    paddingBottom: 2,
+    marginBottom: 6,
   },
   text: {
-    fontSize: 11,
+    fontSize: 9,
     color: '#374151',
-    lineHeight: 1.5,
+    lineHeight: 1.3,
   },
   itemTitle: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#1f2937',
   },
   itemSubtitle: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#ea580c',
-    marginTop: 2,
+    marginTop: 1,
   },
   itemPeriod: {
-    fontSize: 9,
+    fontSize: 8,
     color: '#9ca3af',
-    marginTop: 2,
+    marginTop: 1,
   },
   itemDescription: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#4b5563',
-    marginTop: 4,
-    lineHeight: 1.4,
+    marginTop: 2,
+    lineHeight: 1.3,
   },
   tag: {
-    fontSize: 9,
+    fontSize: 8,
     backgroundColor: '#fff7ed',
     color: '#ea580c',
-    padding: '2 6',
-    borderRadius: 4,
-    marginRight: 4,
-    marginTop: 4,
+    paddingVertical: 1,
+    paddingHorizontal: 4,
+    borderRadius: 3,
+    marginRight: 3,
+    marginTop: 2,
   },
-  contactRow: {
+  twoColumn: {
     flexDirection: 'row',
-    marginTop: 4,
+    gap: 20,
   },
-  contactItem: {
-    fontSize: 10,
-    color: '#4b5563',
-    marginRight: 12,
+  column: {
+    flex: 1,
   },
 });
 
@@ -93,9 +118,9 @@ export default function ResumePDF() {
           <Text style={styles.tagline}>{personalInfo.tagline}</Text>
           
           <View style={styles.contactRow}>
-            <Text style={styles.contactItem}>📧 {contact.email}</Text>
-            {contact.phone && <Text style={styles.contactItem}>📱 {contact.phone}</Text>}
-            {contact.location && <Text style={styles.contactItem}>📍 {contact.location}</Text>}
+            <Text style={styles.contactItem}>{contact.email}</Text>
+            {contact.phone && <Text style={styles.contactItem}>{contact.phone}</Text>}
+            {contact.location && <Text style={styles.contactItem}>{contact.location}</Text>}
           </View>
         </View>
 
@@ -107,11 +132,13 @@ export default function ResumePDF() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>工作经历</Text>
           {experiences.map((exp, index) => (
-            <View key={index} style={{ marginBottom: 12 }}>
-              <Text style={styles.itemTitle}>{exp.company}</Text>
+            <View key={index} style={{ marginBottom: 6 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={styles.itemTitle}>{exp.company}</Text>
+                <Text style={styles.itemPeriod}>{exp.period}</Text>
+              </View>
               <Text style={styles.itemSubtitle}>{exp.position}</Text>
-              <Text style={styles.itemPeriod}>{exp.period}</Text>
-              {exp.description.map((desc, i) => (
+              {exp.description.slice(0, 2).map((desc, i) => (
                 <Text key={i} style={styles.itemDescription}>• {desc}</Text>
               ))}
             </View>
@@ -120,26 +147,24 @@ export default function ResumePDF() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>技能</Text>
-          {skillCategories.map((category, index) => (
-            <View key={index} style={{ marginBottom: 8 }}>
-              <Text style={{ fontSize: 11, fontWeight: 'bold', color: '#374151' }}>
-                {category.category}
-              </Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                {category.skills.map((skill, i) => (
-                  <Text key={i} style={styles.tag}>
-                    {skill.name} ({skill.level})
-                  </Text>
-                ))}
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {skillCategories.map((category, index) => (
+              <View key={index} style={{ marginRight: 15, marginBottom: 4 }}>
+                <Text style={{ fontSize: 9, fontWeight: 'bold', color: '#374151' }}>
+                  {category.category}:
+                </Text>
+                <Text style={{ fontSize: 9, color: '#4b5563' }}>
+                  {category.skills.map(s => s.name).join(' / ')}
+                </Text>
               </View>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>项目经验</Text>
-          {projects.map((project, index) => (
-            <View key={index} style={{ marginBottom: 10 }}>
+          {projects.slice(0, 2).map((project, index) => (
+            <View key={index} style={{ marginBottom: 4 }}>
               <Text style={styles.itemTitle}>{project.name}</Text>
               <Text style={styles.itemDescription}>{project.description}</Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>

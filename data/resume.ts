@@ -49,8 +49,8 @@ export interface ResumeData {
 
 export const resumeData: ResumeData = {
   personalInfo: {
-    name: '张三',
-    title: '前端开发工程师',
+    name: 'Amber',
+    title: 'VibeCoding主讲老师',
     tagline: '热爱技术，专注于创造优雅的用户体验',
     avatar: '/avatar.jpg',
   },
